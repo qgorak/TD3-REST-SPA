@@ -76,11 +76,14 @@ public class OrgaController {
 				"      this.editedItem = Object.assign({}, item)\r\n" + 
 				"      this.form = true","item");
 
-		vue.addMethod("save" , "if (this.editedIndex > -1) {\r\n"
-				+ "        Object.assign(this.organizations[this.editedIndex], this.editedItem)\r\n"
-				+ "        this.$http['post']('http://localhost:8080/rest/orgas/update/'+ this.organizations[this.editedIndex].id,this.editedItem)"
+		vue.addMethod("save" , "let self = this; \r\n"
+				+ "if (this.editedIndex > -1) {\r\n"
+				+ "        this.$http['post']('http://localhost:8080/rest/orgas/update/'+ this.organizations[this.editedIndex].id,this.editedItem).then(function(response) {\n"
+				+ "                    console.log(self.organizations)\r\n"
+				+ "                    self.showAlert = true\r\n "
+				+ "                    self.messageAlert = 'Organisation '+response.data.name+' éditée'\r\n "
+				+ "                    setTimeout(() => self.showAlert = false, 5000)})\r\n"                                
 				+ "      } else {\r\n"	
-				+ "      let self = this;"
 				+ "        this.$http['post']('http://localhost:8080/rest/orgas/create', this.editedItem).then(function(response) {\n"
 				+ "                    self.showAlert = true\r\n "
 				+ "                    self.organizations.push(response.data);\n"

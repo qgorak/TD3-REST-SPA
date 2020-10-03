@@ -40,7 +40,7 @@ public class RestOrgaController {
 		return repo.findById(id);
 	}
 	
-	@ResponseBody
+
 	@PostMapping("/orgas/create")
     public Organization create(@RequestBody Organization orga) {
 		repo.saveAndFlush(orga);
@@ -51,13 +51,15 @@ public class RestOrgaController {
     public void delete(@PathVariable int id) {
 		repo.deleteById(id);
     }
+	
 	@PostMapping("orgas/update/{id}")
-    public void update(@PathVariable int id,@RequestBody Organization orga) {
+    public Organization update(@PathVariable int id,@RequestBody Organization orga) {
 		Organization orgaToUpdate = repo.findById(id);
 		orgaToUpdate.setName(orga.getName());
 		orgaToUpdate.setDomain(orga.getDomain());
 		orgaToUpdate.setAliases(orga.getAliases());
 		repo.save(orgaToUpdate);
+		return orga;
 
     }
 	
