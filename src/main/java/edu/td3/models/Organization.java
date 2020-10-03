@@ -17,7 +17,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Organization {
-    @Id
+  
+	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
      

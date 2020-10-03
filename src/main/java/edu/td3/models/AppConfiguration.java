@@ -9,10 +9,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @ComponentScan("io.github.jeemv.springboot.vuejs")
 public class AppConfiguration {
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-       return builder.build();
-    }
 
 
 }

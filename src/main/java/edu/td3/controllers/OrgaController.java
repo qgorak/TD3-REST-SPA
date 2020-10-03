@@ -24,9 +24,6 @@ import io.github.jeemv.springboot.vuejs.utilities.Http;
 
  
 public class OrgaController {
-
-	@Autowired
-	private RestTemplate restTemplate;
 	
 	@Autowired
 	private AbstractVueJS vue;
@@ -65,7 +62,8 @@ public class OrgaController {
 				"                        \"value\": \"data-table-expand\"\r\n" + 
 				"                    }]");
 		vue.addDataRaw("editedItem", "{ name: '',aliases: '', domain: '',settings: '',users: []}");
-		vue.addData("dialog",false);
+		vue.addData("form",false);
+		vue.addData("confirmDelete",false);
 		vue.addDataRaw("defaultItem", "{ name: '',aliases: '', domain: '',settings: '',users: []}");
 		vue.addData("editedIndex",-1);
 		vue.addData("showAlert",false);
@@ -76,7 +74,7 @@ public class OrgaController {
 		
 		vue.addMethod("editItem" , "this.editedIndex = this.organizations.indexOf(item)\r\n" + 
 				"      this.editedItem = Object.assign({}, item)\r\n" + 
-				"      this.dialog = true","item");
+				"      this.form = true","item");
 
 		vue.addMethod("save" , "if (this.editedIndex > -1) {\r\n"
 				+ "        Object.assign(this.organizations[this.editedIndex], this.editedItem)\r\n"
@@ -84,23 +82,27 @@ public class OrgaController {
 				+ "      } else {\r\n"	
 				+ "      let self = this;"
 				+ "        this.$http['post']('http://localhost:8080/rest/orgas/create', this.editedItem).then(function(response) {\n"
+				+ "                    self.showAlert = true\r\n "
 				+ "                    self.organizations.push(response.data);\n"
+				+ "                    self.messageAlert = 'Organisation '+response.data.name+' ajoutée'\r\n "
+				+ "                    setTimeout(() => self.showAlert = false, 5000)\r\n"
 				+ "                });"
 				+ "      }\r\n"
 				+ "      this.close()");
-		vue.addMethod("close" , " this.dialog = false\r\n"
+		vue.addMethod("close" , " this.form = false\r\n"
 				+ "      this.$nextTick(() => {\r\n"
 				+ "        this.editedItem = Object.assign({}, this.defaultItem)\r\n"
 				+ "        this.editedIndex = -1\r\n"
 				+ "      })");
 		vue.addMethod("deleteItem" , "this.showAlert = true\r\n"
+				+ "      this.confirmDelete = false\r\n"
 				+ "      const index = this.organizations.indexOf(item)\r\n"
 				+ "       this.organizations.splice(index, 1)\r\n"
 				+ "       this.$http['delete']('http://localhost:8080/rest/orgas/delete/'+ item.id)\r\n"
 				+ "       this.messageAlert = 'Organisation '+item.name+' supprimée'\r\n "
 				+ "       setTimeout(() => this.showAlert = false, 5000)\r\n","item");
 		vue.onBeforeMount("let self=this;" + Http.get("http://localhost:8080/rest/orgas/", "self.organizations=response.data;"));
-		
+		vue.addMethod("showDeleteConfirm","","item");
 	}
 	
 	
